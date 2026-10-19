@@ -349,34 +349,34 @@
 
     <!-- Modal: Manual Trade Entry / Edit -->
     <div id="tradeModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden my-8">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-850">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-850 flex-shrink-0">
                 <h3 id="modalTitle" class="font-bold text-white text-base">Record New Trade</h3>
                 <button onclick="closeTradeModal()" class="text-slate-400 hover:text-white transition">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
             
-            <form id="tradeForm" onsubmit="saveTrade(event)" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+            <form id="tradeForm" onsubmit="saveTrade(event)" class="p-6 space-y-4 overflow-y-auto flex-1 text-xs">
                 <input type="hidden" id="tradeId">
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <!-- Date & Time -->
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Date & Time</label>
-                        <input type="datetime-local" id="tradeDate" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-indigo-500 outline-none">
+                        <label class="block font-medium text-slate-400 mb-1">Date & Time</label>
+                        <input type="datetime-local" id="tradeDate" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-indigo-500 outline-none">
                     </div>
 
                     <!-- Asset Symbol -->
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Asset / Symbol</label>
-                        <input type="text" id="tradeSymbol" placeholder="e.g. Volatility 75, EUR/USD, BTCUSD" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-indigo-500 outline-none">
+                        <label class="block font-medium text-slate-400 mb-1">Asset / Symbol</label>
+                        <input type="text" id="tradeSymbol" placeholder="e.g. Volatility 75, EUR/USD, BTCUSD" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-indigo-500 outline-none">
                     </div>
 
                     <!-- Trade Type -->
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Type</label>
-                        <select id="tradeType" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-indigo-500 outline-none">
+                        <label class="block font-medium text-slate-400 mb-1">Type</label>
+                        <select id="tradeType" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-indigo-500 outline-none">
                             <option value="BUY">BUY / LONG</option>
                             <option value="SELL">SELL / SHORT</option>
                         </select>
@@ -384,50 +384,50 @@
 
                     <!-- Lot Size -->
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Lot Size / Volume</label>
-                        <input type="number" step="any" id="tradeLot" placeholder="0.10" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-indigo-500 outline-none">
+                        <label class="block font-medium text-slate-400 mb-1">Lot Size / Volume</label>
+                        <input type="number" step="any" id="tradeLot" placeholder="0.10" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-indigo-500 outline-none">
                     </div>
 
                     <!-- Entry Price -->
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Entry Price</label>
-                        <input type="number" step="any" id="tradeEntry" placeholder="1.08500" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-indigo-500 outline-none">
+                        <label class="block font-medium text-slate-400 mb-1">Entry Price</label>
+                        <input type="number" step="any" id="tradeEntry" placeholder="1.08500" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-indigo-500 outline-none">
                     </div>
 
                     <!-- Exit Price -->
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Exit Price</label>
-                        <input type="number" step="any" id="tradeExit" placeholder="1.09000" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-indigo-500 outline-none">
+                        <label class="block font-medium text-slate-400 mb-1">Exit Price</label>
+                        <input type="number" step="any" id="tradeExit" placeholder="1.09000" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-indigo-500 outline-none">
                     </div>
 
                     <!-- Stop Loss -->
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Stop Loss (SL)</label>
-                        <input type="number" step="any" id="tradeSL" placeholder="1.08200" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-indigo-500 outline-none">
+                        <label class="block font-medium text-slate-400 mb-1">Stop Loss (SL)</label>
+                        <input type="number" step="any" id="tradeSL" placeholder="1.08200" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-indigo-500 outline-none">
                     </div>
 
                     <!-- Take Profit -->
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Take Profit (TP)</label>
-                        <input type="number" step="any" id="tradeTP" placeholder="1.09500" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-indigo-500 outline-none">
+                        <label class="block font-medium text-slate-400 mb-1">Take Profit (TP)</label>
+                        <input type="number" step="any" id="tradeTP" placeholder="1.09500" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-indigo-500 outline-none">
                     </div>
 
                     <!-- Net P&L -->
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Net P&L ($ Profit/Loss)</label>
-                        <input type="number" step="any" id="tradeProfit" placeholder="50.00" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-indigo-500 outline-none">
+                        <label class="block font-medium text-slate-400 mb-1">Net P&L ($ Profit/Loss)</label>
+                        <input type="number" step="any" id="tradeProfit" placeholder="50.00" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-indigo-500 outline-none">
                     </div>
 
                     <!-- Risk % -->
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Risk Percentage (%)</label>
-                        <input type="number" step="any" id="tradeRisk" placeholder="1.0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-indigo-500 outline-none">
+                        <label class="block font-medium text-slate-400 mb-1">Risk Percentage (%)</label>
+                        <input type="number" step="any" id="tradeRisk" placeholder="1.0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-indigo-500 outline-none">
                     </div>
 
                     <!-- Strategy -->
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Strategy Tag</label>
-                        <select id="tradeStrategy" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-indigo-500 outline-none">
+                        <label class="block font-medium text-slate-400 mb-1">Strategy Tag</label>
+                        <select id="tradeStrategy" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-indigo-500 outline-none">
                             <option value="Smart Money Concepts">Smart Money Concepts</option>
                             <option value="Breakout">Breakout</option>
                             <option value="Scalping">Scalping</option>
@@ -438,8 +438,8 @@
 
                     <!-- Session -->
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Trading Session</label>
-                        <select id="tradeSession" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-indigo-500 outline-none">
+                        <label class="block font-medium text-slate-400 mb-1">Trading Session</label>
+                        <select id="tradeSession" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-indigo-500 outline-none">
                             <option value="Asian">Asian Session</option>
                             <option value="London">London Session</option>
                             <option value="New York">New York Session</option>
@@ -450,13 +450,13 @@
 
                 <!-- Journal Notes -->
                 <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Trade Notes / Reflection</label>
-                    <textarea id="tradeNotes" rows="3" placeholder="Why did you take this setup? Followed rules?" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-indigo-500 outline-none"></textarea>
+                    <label class="block font-medium text-slate-400 mb-1">Trade Notes / Reflection</label>
+                    <textarea id="tradeNotes" rows="3" placeholder="Why did you take this setup? Followed rules?" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-indigo-500 outline-none"></textarea>
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
-                    <button type="button" onclick="closeTradeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition">Cancel</button>
-                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition shadow-md shadow-indigo-600/30">Save Trade</button>
+                    <button type="button" onclick="closeTradeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-medium transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-semibold transition shadow-md shadow-indigo-600/30">Save Trade</button>
                 </div>
             </form>
         </div>
@@ -464,8 +464,8 @@
 
     <!-- Modal: cTrader OpenAPI Integration Hub -->
     <div id="apiModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden my-8">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-850">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-850 flex-shrink-0">
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/20">
                         <i class="fa-solid fa-plug"></i>
@@ -480,7 +480,7 @@
                 </button>
             </div>
             
-            <form onsubmit="saveApiSettings(event)" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto text-xs">
+            <form onsubmit="saveApiSettings(event)" class="p-6 space-y-4 overflow-y-auto flex-1 text-xs">
                 <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-3 text-indigo-300 flex items-start gap-2.5">
                     <i class="fa-solid fa-shield-halved text-base text-indigo-400 mt-0.5"></i>
                     <div>
@@ -503,13 +503,22 @@
                         <input type="text" id="apiAccountId" placeholder="e.g. 12345678" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono focus:ring-1 focus:ring-indigo-500 outline-none">
                     </div>
                     <div>
-                        <label class="block font-medium text-slate-400 mb-1">Refresh Token</label>
+                        <label class="block font-medium text-slate-400 mb-1">Access / Refresh Token</label>
                         <input type="password" id="apiRefreshToken" placeholder="OAuth Token" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono focus:ring-1 focus:ring-indigo-500 outline-none">
                     </div>
                 </div>
 
+                <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-3 flex flex-col gap-2">
+                    <span class="font-semibold text-white">How to Get cTrader OAuth Access Token:</span>
+                    <ol class="list-decimal list-inside text-slate-400 space-y-1">
+                        <li>Log in to <a href="https://openapi.ctrader.com" target="_blank" class="text-indigo-400 underline">openapi.ctrader.com</a> and create an app.</li>
+                        <li>Copy your <strong>Client ID</strong> and <strong>Client Secret</strong> into the fields above.</li>
+                        <li>Click <a id="oauthLink" href="https://id.ctrader.com/my/settings/openapi/grantingaccess/" target="_blank" class="text-emerald-400 underline font-medium">Authorize with cTrader</a> to generate your token.</li>
+                    </ol>
+                </div>
+
                 <!-- Live Sync Terminal / Console Log -->
-                <div class="mt-4">
+                <div class="mt-2">
                     <div class="flex items-center justify-between mb-1">
                         <label class="font-medium text-slate-400">Sync Status Console</label>
                         <button type="button" onclick="syncLiveHistory()" class="text-indigo-400 hover:text-indigo-300 transition flex items-center gap-1">
@@ -517,7 +526,7 @@
                         </button>
                     </div>
                     <div id="syncLog" class="bg-slate-950 border border-slate-800 rounded-xl p-3 h-28 overflow-y-auto font-mono text-[11px] text-slate-400 space-y-1">
-                        <div><span class="text-indigo-400">[System]</span> cTrader OpenAPI module ready.</div>
+                        <div><span class="text-indigo-400">[System]</span> cTrader Open API module ready.</div>
                     </div>
                 </div>
 
@@ -531,8 +540,8 @@
 
     <!-- Modal: Save & Access Guide -->
     <div id="saveModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden my-8">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-850">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-850 flex-shrink-0">
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
                         <i class="fa-solid fa-laptop-mobile"></i>
@@ -547,7 +556,7 @@
                 </button>
             </div>
             
-            <div class="p-6 space-y-5 max-h-[80vh] overflow-y-auto text-xs text-slate-300">
+            <div class="p-6 space-y-5 overflow-y-auto flex-1 text-xs text-slate-300">
                 <!-- Auto Save Status -->
                 <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-emerald-300 flex items-start gap-3">
                     <i class="fa-solid fa-circle-check text-base text-emerald-400 mt-0.5"></i>
