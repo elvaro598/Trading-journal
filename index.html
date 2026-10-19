@@ -475,6 +475,60 @@
                         <p class="text-[10px] text-slate-400">Connect your Deriv cTrader account for auto trade syncing</p>
                     </div>
                 </div>
+                <button onclick="closeApiModal()" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <form onsubmit="saveApiSettings(event)" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto text-xs">
+                <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-3 text-indigo-300 flex items-start gap-2.5">
+                    <i class="fa-solid fa-shield-halved text-base text-indigo-400 mt-0.5"></i>
+                    <div>
+                        <span class="font-semibold text-indigo-200">Read-Only Safety Guarantee:</span>
+                        <p class="mt-0.5 text-indigo-300/80">Only `accounts` scope (view account history) is requested. No trade execution or withdrawal access can be performed with these credentials.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-medium text-slate-400 mb-1">cTrader Client ID</label>
+                        <input type="text" id="apiClientId" placeholder="Enter App Client ID" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono focus:ring-1 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-400 mb-1">cTrader Client Secret</label>
+                        <input type="password" id="apiClientSecret" placeholder="••••••••••••" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono focus:ring-1 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-400 mb-1">Account ID</label>
+                        <input type="text" id="apiAccountId" placeholder="e.g. 12345678" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono focus:ring-1 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-400 mb-1">Refresh Token</label>
+                        <input type="password" id="apiRefreshToken" placeholder="OAuth Token" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono focus:ring-1 focus:ring-indigo-500 outline-none">
+                    </div>
+                </div>
+
+                <!-- Live Sync Terminal / Console Log -->
+                <div class="mt-4">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="font-medium text-slate-400">Sync Status Console</label>
+                        <button type="button" onclick="syncLiveHistory()" class="text-indigo-400 hover:text-indigo-300 transition flex items-center gap-1">
+                            <i id="syncIcon" class="fa-solid fa-rotate text-xs"></i> Trigger Live Sync
+                        </button>
+                    </div>
+                    <div id="syncLog" class="bg-slate-950 border border-slate-800 rounded-xl p-3 h-28 overflow-y-auto font-mono text-[11px] text-slate-400 space-y-1">
+                        <div><span class="text-indigo-400">[System]</span> cTrader OpenAPI module ready.</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+                    <button type="button" onclick="closeApiModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-medium transition">Close</button>
+                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-semibold transition shadow-md shadow-indigo-600/30">Save Credentials</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Modal: Save & Access Guide -->
     <div id="saveModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden my-8">
@@ -545,7 +599,7 @@
         </div>
     </div>
 
-    <!-- cTrader OpenAPI Modal Logic & Save Modal Logic -->
+    <!-- Application Script Engine -->
     <script>
         // State Variables
         let trades = [];
@@ -671,7 +725,6 @@
             let losses = 0;
             let grossWin = 0;
             let grossLoss = 0;
-            let currentStreakW = 0, currentStreakL = 0;
             let maxStreakW = 0, maxStreakL = 0;
             let tempStreakW = 0, tempStreakL = 0;
 
@@ -1117,7 +1170,7 @@
             reader.readAsText(file);
         }
 
-        // cTrader OpenAPI Modal Logic
+        // Modal Controls
         function openApiModal() {
             document.getElementById('apiModal').classList.remove('hidden');
         }
