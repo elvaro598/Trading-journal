@@ -1,686 +1,288 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deriv & cTrader Trading Journal</title>
+    <title>Deriv & cTrader Analytics Dashboard</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        slate: {
-                            850: '#111827',
-                            900: '#0f172a',
-                            950: '#020617',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- FontAwesome Icons CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            background-color: #0b0f19;
-            color: #f1f5f9;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        }
-        .card-glow {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(51, 65, 85, 0.5);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.6);
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 4px;
-        }
+        body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; }
+        .card { background-color: #1e293b; border: 1px solid #334155; border-radius: 0.75rem; padding: 1.25rem; }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-6 lg:p-8 flex flex-col justify-between">
+<body class="p-6">
 
     <!-- Header Navigation -->
-    <header class="max-w-7xl mx-auto w-full mb-8">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900/80 p-5 rounded-2xl border border-slate-800 shadow-xl">
-            <div class="flex items-center gap-3">
-                <div class="bg-gradient-to-tr from-blue-600 to-emerald-500 p-3 rounded-xl text-white shadow-lg shadow-blue-500/20">
-                    <i class="fa-solid fa-chart-line text-2xl"></i>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <h1 class="text-2xl font-extrabold tracking-tight text-white">Deriv Analytics</h1>
-                        <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs px-2.5 py-0.5 rounded-full font-medium">Hybrid Sync</span>
-                    </div>
-                    <p class="text-xs text-slate-400">Automated Multi-Account Performance & Risk Journal</p>
-                </div>
-            </div>
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <div>
+            <h1 class="text-2xl font-bold flex items-center gap-2">
+                <span class="bg-blue-600 text-white p-2 rounded-lg">📊</span> Deriv Analytics
+            </h1>
+            <p class="text-gray-400 text-sm">Automated Performance & Risk Journal</p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+            <button onclick="toggleModal(true)" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2">
+                🔌 Deriv / TV Sync
+            </button>
+            <button onclick="clearSampleData()" class="bg-slate-700 hover:bg-slate-600 text-white font-medium px-4 py-2 rounded-lg">
+                🧪 Clear / Reset
+            </button>
+        </div>
+    </div>
 
-            <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-end">
-                <button onclick="toggleModal(true)" class="flex-1 sm:flex-initial bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-plug text-xs"></i> Deriv / TV Sync
-                </button>
-                <button onclick="loadSampleData()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium px-4 py-2.5 rounded-xl border border-slate-700 transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-flask text-xs"></i> Sample Data
-                </button>
-                <button onclick="clearAllData()" class="bg-slate-800 hover:bg-rose-950/40 text-slate-400 hover:text-rose-400 text-sm font-medium p-2.5 rounded-xl border border-slate-700 transition-all" title="Clear All Data">
-                    <i class="fa-solid fa-trash-can"></i>
-                </button>
+    <!-- Metrics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+        <div class="card">
+            <p class="text-gray-400 text-xs font-semibold uppercase">Account Balance</p>
+            <h3 id="metric-balance" class="text-2xl font-bold text-white mt-1">$0.00</h3>
+            <span id="account-id-label" class="text-gray-500 text-xs">Live Sync Pending</span>
+        </div>
+        <div class="card">
+            <p class="text-gray-400 text-xs font-semibold uppercase">Net P&L</p>
+            <h3 id="metric-pnl" class="text-2xl font-bold text-emerald-400 mt-1">+$0.00</h3>
+        </div>
+        <div class="card">
+            <p class="text-gray-400 text-xs font-semibold uppercase">Win Rate</p>
+            <h3 id="metric-winrate" class="text-2xl font-bold text-white mt-1">0.0%</h3>
+            <span id="metric-trades-count" class="text-gray-500 text-xs">0 Trades Total</span>
+        </div>
+        <div class="card">
+            <p class="text-gray-400 text-xs font-semibold uppercase">Profit Factor</p>
+            <h3 id="metric-pf" class="text-2xl font-bold text-white mt-1">0.00</h3>
+        </div>
+        <div class="card">
+            <p class="text-gray-400 text-xs font-semibold uppercase">Avg Win / Loss</p>
+            <h3 id="metric-avg-winloss" class="text-2xl font-bold text-white mt-1">$0 / $0</h3>
+        </div>
+        <div class="card">
+            <p class="text-gray-400 text-xs font-semibold uppercase">Max Drawdown</p>
+            <h3 id="metric-drawdown" class="text-2xl font-bold text-rose-500 mt-1">0.00%</h3>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div class="card lg:col-span-2">
+            <h3 class="text-lg font-bold mb-4">📈 Equity & Growth Trajectory</h3>
+            <div class="h-64">
+                <canvas id="equityChart"></canvas>
             </div>
         </div>
-    </header>
-
-    <!-- Main Content Grid -->
-    <main class="max-w-7xl mx-auto w-full space-y-6 flex-grow">
-
-        <!-- Performance Overview Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div class="card-glow p-4 rounded-2xl flex flex-col justify-between">
-                <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Account Balance</p>
-                <div class="my-2">
-                    <h2 id="metric-balance" class="text-2xl font-bold text-white">$0.00</h2>
-                    <p id="account-id-label" class="text-[11px] text-slate-500 mt-0.5">Account: 1576104</p>
-                </div>
-                <div class="flex items-center gap-1.5 text-[11px]">
-                    <span id="sync-indicator" class="w-2 h-2 rounded-full bg-slate-500"></span>
-                    <span id="sync-status-text" class="text-slate-500">Disconnected</span>
-                </div>
-            </div>
-
-            <div class="card-glow p-4 rounded-2xl flex flex-col justify-between">
-                <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Net P&L</p>
-                <div class="my-2">
-                    <h2 id="metric-pnl" class="text-2xl font-bold text-emerald-400">+$0.00</h2>
-                    <p id="metric-pnl-percent" class="text-[11px] text-emerald-500/80 mt-0.5">+0.00%</p>
-                </div>
-                <span class="text-[11px] text-slate-500">Net Realized Profit</span>
-            </div>
-
-            <div class="card-glow p-4 rounded-2xl flex flex-col justify-between">
-                <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Win Rate</p>
-                <div class="my-2">
-                    <h2 id="metric-winrate" class="text-2xl font-bold text-white">0.0%</h2>
-                    <p id="metric-trades-count" class="text-[11px] text-slate-500 mt-0.5">0 Trades Total</p>
-                </div>
-                <span class="text-[11px] text-slate-500">Wins vs Total Trades</span>
-            </div>
-
-            <div class="card-glow p-4 rounded-2xl flex flex-col justify-between">
-                <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Profit Factor</p>
-                <div class="my-2">
-                    <h2 id="metric-pf" class="text-2xl font-bold text-white">0.00</h2>
-                    <p class="text-[11px] text-slate-500 mt-0.5">Gross W / Gross L</p>
-                </div>
-                <span class="text-[11px] text-slate-500">Risk-Adjusted Gain</span>
-            </div>
-
-            <div class="card-glow p-4 rounded-2xl flex flex-col justify-between">
-                <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Avg Win / Loss</p>
-                <div class="my-2">
-                    <h2 id="metric-avg-winloss" class="text-lg font-bold text-white">$0 / $0</h2>
-                    <p id="metric-rrr" class="text-[11px] text-blue-400 mt-0.5">Avg RRR: 1:0.0</p>
-                </div>
-                <span class="text-[11px] text-slate-500">Trade Expectancy</span>
-            </div>
-
-            <div class="card-glow p-4 rounded-2xl flex flex-col justify-between">
-                <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Max Drawdown</p>
-                <div class="my-2">
-                    <h2 id="metric-drawdown" class="text-2xl font-bold text-rose-500">0.00%</h2>
-                    <p id="metric-streak" class="text-[11px] text-slate-500 mt-0.5">Max Streak: 0W / 0L</p>
-                </div>
-                <span class="text-[11px] text-slate-500">Peak-to-Trough Drop</span>
+        <div class="card">
+            <h3 class="text-lg font-bold mb-4">🎯 Outcome Distribution</h3>
+            <div class="h-64 flex items-center justify-center">
+                <canvas id="outcomeChart"></canvas>
             </div>
         </div>
+    </div>
 
-        <!-- Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="card-glow p-5 rounded-2xl lg:col-span-2 flex flex-col justify-between">
-                <div class="flex items-center justify-between mb-4">
-                    <div>
-                        <h3 class="text-base font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-chart-area text-blue-400"></i> Equity & Growth Trajectory
-                        </h3>
-                        <p class="text-xs text-slate-400">Cumulative account growth trajectory over closed trades</p>
-                    </div>
-                </div>
-                <div class="h-64 w-full relative">
-                    <canvas id="equityChart"></canvas>
-                </div>
-            </div>
-
-            <div class="card-glow p-5 rounded-2xl flex flex-col justify-between">
-                <div class="flex items-center justify-between mb-4">
-                    <div>
-                        <h3 class="text-base font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-chart-pie text-emerald-400"></i> Outcome Distribution
-                        </h3>
-                        <p class="text-xs text-slate-400">Win / Loss / Break-even ratio</p>
-                    </div>
-                </div>
-                <div class="h-64 w-full relative flex items-center justify-center">
-                    <canvas id="outcomeChart"></canvas>
-                </div>
-            </div>
+    <!-- Synchronized Trade History Table -->
+    <div class="card">
+        <h3 class="text-lg font-bold mb-4">📋 Synchronized Trade History</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-gray-300">
+                <thead class="bg-slate-800 text-gray-400 uppercase text-xs">
+                    <tr>
+                        <th class="p-3">Transaction ID</th>
+                        <th class="p-3">Purchase Time</th>
+                        <th class="p-3">Buy Price / Stake</th>
+                        <th class="p-3">Sell Price / Payout</th>
+                        <th class="p-3">Profit / Loss</th>
+                    </tr>
+                </thead>
+                <tbody id="trade-history-body">
+                    <tr>
+                        <td colspan="5" class="text-center p-6 text-gray-500">No synced trade history available. Connect your Deriv API Token to load data.</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-
-        <!-- Trade Execution Table -->
-        <div class="card-glow rounded-2xl overflow-hidden">
-            <div class="p-5 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                <div>
-                    <h3 class="text-base font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-indigo-400"></i> Synchronized Trade Execution Logs
-                    </h3>
-                    <p class="text-xs text-slate-400">Real-time trade history fetched via Deriv gateway</p>
-                </div>
-                <span id="log-count-badge" class="bg-slate-800 text-slate-300 border border-slate-700 text-xs px-3 py-1 rounded-lg">0 Trades Logged</span>
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-slate-900/90 text-slate-400 uppercase text-[11px] tracking-wider font-semibold border-b border-slate-800">
-                        <tr>
-                            <th class="py-3.5 px-4">Transaction ID</th>
-                            <th class="py-3.5 px-4">Purchase Time</th>
-                            <th class="py-3.5 px-4">Stake / Buy Price</th>
-                            <th class="py-3.5 px-4">Payout / Sell Price</th>
-                            <th class="py-3.5 px-4">Profit / Loss</th>
-                        </tr>
-                    </thead>
-                    <tbody id="trade-history-body" class="divide-y divide-slate-800/60 font-mono text-xs text-slate-300">
-                        <tr>
-                            <td colspan="5" class="py-12 text-center text-slate-500 font-sans">
-                                <i class="fa-solid fa-circle-nodes text-3xl mb-3 block text-slate-600"></i>
-                                No trade history loaded. Click <strong>Deriv / TV Sync</strong> to connect live account data.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-
-    <footer class="max-w-7xl mx-auto w-full mt-8 py-4 text-center text-xs text-slate-500 border-t border-slate-800/60">
-        Deriv & cTrader Trading Journal &copy; 2026. Powered by Render Proxy & Deriv WebSocket v3.
-    </footer>
+    </div>
 
     <!-- Integration Settings Modal -->
-    <div id="sync-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="card-glow bg-slate-900 max-w-lg w-full rounded-2xl p-6 border border-slate-700 shadow-2xl relative">
-            <div class="flex justify-between items-center mb-5 border-b border-slate-800 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div class="bg-blue-600/20 text-blue-400 p-2 rounded-lg">
-                        <i class="fa-solid fa-sliders text-lg"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-white">Integration Hub Settings</h3>
-                        <p class="text-xs text-slate-400">Configure Render Proxy & WebSocket credentials</p>
-                    </div>
-                </div>
-                <button onclick="toggleModal(false)" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-all">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
+    <div id="sync-modal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50">
+        <div class="card max-w-lg w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">🔌 Integration Hub Settings</h3>
+                <button onclick="toggleModal(false)" class="text-gray-400 hover:text-white">✕</button>
             </div>
-
-            <div class="space-y-4 text-xs">
+            <div class="space-y-4">
                 <div>
-                    <label class="block font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Deriv Read API Token</label>
-                    <div class="relative">
-                        <input type="password" id="deriv-token-input" placeholder="Paste your Deriv API Read Token" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-blue-500 font-mono transition-all">
-                        <button onclick="toggleTokenVisibility()" class="absolute right-3 top-2.5 text-slate-500 hover:text-slate-300">
-                            <i id="eye-icon" class="fa-solid fa-eye"></i>
-                        </button>
-                    </div>
-                    <p class="text-[11px] text-slate-500 mt-1">Requires 'Read' and 'Trading Information' permissions.</p>
+                    <label class="block text-xs uppercase text-gray-400 mb-1">Deriv API Token (Read Permission)</label>
+                    <input type="password" id="deriv-token-input" placeholder="Paste your Deriv Read Token" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
                 </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Account ID</label>
-                        <input type="text" id="deriv-account-input" value="1576104" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-blue-500 font-mono transition-all">
-                    </div>
-                    <div>
-                        <label class="block font-semibold uppercase tracking-wider text-slate-400 mb-1.5">App ID</label>
-                        <input type="text" id="deriv-appid-input" value="1089" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-blue-500 font-mono transition-all">
-                    </div>
-                </div>
-
                 <div>
-                    <label class="block font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Sync Engine Console Log</label>
-                    <div id="modal-log" class="bg-slate-950 border border-slate-800 p-3 rounded-xl font-mono h-36 overflow-y-auto custom-scrollbar space-y-1 text-[11px]">
-                        <div class="text-slate-500">[System] Integration hub initialized. Ready to sync.</div>
+                    <label class="block text-xs uppercase text-gray-400 mb-1">Account ID</label>
+                    <input type="text" id="deriv-account-input" value="1576104" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-gray-400 mb-1">Sync Console Log</label>
+                    <div id="modal-log" class="bg-black/50 p-3 rounded text-xs font-mono h-28 overflow-y-auto text-emerald-400">
+                        [System Ready] Click Trigger Live Sync to request data via Render Proxy.
                     </div>
                 </div>
-
-                <div class="flex gap-2 pt-2">
-                    <button onclick="triggerHybridSync()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-bolt"></i> Trigger Live Sync
-                    </button>
-                    <button onclick="toggleModal(false)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold px-4 py-2.5 rounded-xl transition-all">
-                        Close
-                    </button>
+                <div class="flex gap-2">
+                    <button onclick="triggerDerivSync()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded">Trigger Live Sync</button>
+                    <button onclick="toggleModal(false)" class="bg-slate-700 text-white px-4 py-2 rounded">Close</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Application Script Logic -->
+    <!-- Dashboard JavaScript Logic -->
     <script>
         let equityChart, outcomeChart;
-        let activeWs = null;
-
-        const RENDER_PROXY_URL = 'https://trading-journal-ivn5.onrender.com/api/sync';
-        const WS_ENDPOINTS = [
-            'wss://ws.derivws.com/websockets/v3',
-            'wss://ws.binaryws.com/websockets/v3'
-        ];
+        const PROXY_URL = 'https://trading-journal-ivn5.onrender.com';
 
         window.onload = function() {
             initCharts();
-
-            const savedToken = localStorage.getItem('deriv_token');
-            const savedAccount = localStorage.getItem('deriv_account');
-
-            if (savedToken) {
-                document.getElementById('deriv-token-input').value = savedToken;
+            if(localStorage.getItem('deriv_token')) {
+                document.getElementById('deriv-token-input').value = localStorage.getItem('deriv_token');
             }
-            if (savedAccount) {
-                document.getElementById('deriv-account-input').value = savedAccount;
-                document.getElementById('account-id-label').innerText = `Account: ${savedAccount}`;
-            }
-
-            if (savedToken) {
-                triggerHybridSync();
-            } else {
-                loadSampleData();
+            if(localStorage.getItem('deriv_account')) {
+                document.getElementById('deriv-account-input').value = localStorage.getItem('deriv_account');
             }
         };
 
         function toggleModal(show) {
-            const modal = document.getElementById('sync-modal');
-            if (show) modal.classList.remove('hidden');
-            else modal.classList.add('hidden');
+            document.getElementById('sync-modal').classList.toggle('hidden', !show);
         }
 
-        function toggleTokenVisibility() {
-            const input = document.getElementById('deriv-token-input');
-            const icon = document.getElementById('eye-icon');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.replace('fa-eye', 'fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.replace('fa-eye-slash', 'fa-eye');
-            }
-        }
-
-        function logConsole(msg, type = 'info') {
+        function logConsole(msg) {
             const consoleDiv = document.getElementById('modal-log');
-            let color = 'text-blue-300';
-            if (type === 'error') color = 'text-rose-400';
-            if (type === 'success') color = 'text-emerald-400';
-            if (type === 'warn') color = 'text-amber-400';
-
-            const time = new Date().toLocaleTimeString();
-            consoleDiv.innerHTML += `<div class="${color}">[${time}] ${msg}</div>`;
+            consoleDiv.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${msg}</div>`;
             consoleDiv.scrollTop = consoleDiv.scrollHeight;
         }
 
-        function setSyncStatus(connected, message) {
-            const indicator = document.getElementById('sync-indicator');
-            const label = document.getElementById('sync-status-text');
-
-            if (connected) {
-                indicator.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
-                label.innerText = message || 'Live Synced';
-                label.className = 'text-emerald-400 font-medium';
-            } else {
-                indicator.className = 'w-2 h-2 rounded-full bg-rose-500';
-                label.innerText = message || 'Disconnected';
-                label.className = 'text-slate-500';
-            }
-        }
-
-        async function triggerHybridSync() {
+        async function triggerDerivSync() {
             const token = document.getElementById('deriv-token-input').value.trim();
-            const accountId = document.getElementById('deriv-account-input').value.trim() || '1576104';
-            const appId = document.getElementById('deriv-appid-input').value.trim() || '1089';
+            const accountId = document.getElementById('deriv-account-input').value.trim();
 
             if (!token) {
-                logConsole('⚠️ Please provide a valid Deriv Read API Token.', 'error');
-                toggleModal(true);
+                logConsole('⚠️ Error: Please enter your Deriv Read API Token.');
                 return;
             }
 
             localStorage.setItem('deriv_token', token);
             localStorage.setItem('deriv_account', accountId);
 
-            logConsole(`🚀 Initiating Hybrid Sync engine for account ${accountId}...`, 'info');
-            setSyncStatus(false, 'Syncing...');
+            logConsole(`Connecting via Render Backend Proxy (${PROXY_URL})...`);
 
-            // Primary: Attempt Render Backend Proxy
-            const proxySuccess = await attemptRenderProxySync(token, accountId);
-            
-            // Secondary Fallback: Direct Client WebSockets
-            if (!proxySuccess) {
-                logConsole('⚠️ Proxy connection bypass required. Switching to Client WebSocket Fallback Engine...', 'warn');
-                connectDirectWebSocketFallback(token, accountId, appId, 0);
-            }
-        }
-
-        async function attemptRenderProxySync(token, accountId) {
-            logConsole(`[Primary Engine] Connecting to Render Proxy (${RENDER_PROXY_URL})...`);
             try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout
-
-                const response = await fetch(RENDER_PROXY_URL, {
+                // Fetch data through backend proxy instead of raw browser WebSockets
+                const response = await fetch(`${PROXY_URL}/api/sync`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: token, account_id: accountId }),
-                    signal: controller.signal
+                    body: JSON.stringify({ token: token, account_id: accountId })
                 });
-
-                clearTimeout(timeoutId);
-
-                if (!response.ok) {
-                    logConsole(`[Proxy Response] HTTP ${response.status} returned from proxy.`, 'warn');
-                    return false;
-                }
 
                 const data = await response.json();
 
-                if (data.error) {
-                    logConsole(`[Proxy Error]: ${data.error}`, 'error');
-                    return false;
-                }
-
-                logConsole(`✅ Render Backend Proxy Sync successful!`, 'success');
-                setSyncStatus(true, 'Render Proxy');
-
-                if (data.balance !== undefined) {
-                    updateBalanceUI(data.balance, accountId);
-                }
-
-                if (data.trades) {
-                    logConsole(`📊 Received ${data.trades.length} trades via backend proxy.`, 'success');
-                    processAndRenderTrades(data.trades);
-                }
-
-                return true;
-
-            } catch (err) {
-                logConsole(`[Proxy Fail]: ${err.name === 'AbortError' ? 'Connection Timeout' : err.message}`, 'warn');
-                return false;
-            }
-        }
-
-        function connectDirectWebSocketFallback(token, accountId, appId, endpointIdx) {
-            if (activeWs) {
-                activeWs.close();
-            }
-
-            const baseUrl = WS_ENDPOINTS[endpointIdx];
-            const wsUrl = `${baseUrl}?app_id=${appId}`;
-
-            logConsole(`[Fallback Engine] Connecting to WebSocket: ${baseUrl}...`);
-
-            try {
-                activeWs = new WebSocket(wsUrl);
-            } catch (e) {
-                logConsole(`Socket creation error: ${e.message}`, 'error');
-                tryNextEndpoint(token, accountId, appId, endpointIdx);
-                return;
-            }
-
-            activeWs.onopen = function() {
-                logConsole(`WebSocket established. Authenticating token...`, 'info');
-                activeWs.send(JSON.stringify({ authorize: token }));
-            };
-
-            activeWs.onmessage = function(event) {
-                const data = JSON.parse(event.data);
-
-                if (data.error) {
-                    logConsole(`❌ API Error: ${data.error.message}`, 'error');
-                    setSyncStatus(false, 'Auth Error');
+                if (!response.ok || data.error) {
+                    logConsole(`❌ Proxy Error: ${data.error || 'Sync request failed.'}`);
                     return;
                 }
 
-                if (data.msg_type === 'authorize') {
-                    const loginId = data.authorize.loginid;
-                    logConsole(`🔓 Authorized Account: ${loginId}`, 'success');
-                    document.getElementById('account-id-label').innerText = `Account: ${loginId}`;
-                    setSyncStatus(true, 'Direct WebSocket');
+                logConsole(`✅ Successfully synchronized account ${accountId}!`);
 
-                    activeWs.send(JSON.stringify({ balance: 1, subscribe: 1 }));
-                    activeWs.send(JSON.stringify({ profit_table: 1, description: 1, limit: 100 }));
+                if (data.balance !== undefined) {
+                    document.getElementById('metric-balance').innerText = `$${parseFloat(data.balance).toFixed(2)}`;
+                    document.getElementById('account-id-label').innerText = `Account: ${accountId}`;
+                    logConsole(`💰 Live Balance Fetched: $${data.balance}`);
                 }
 
-                if (data.msg_type === 'balance') {
-                    const bal = parseFloat(data.balance.balance);
-                    updateBalanceUI(bal, accountId);
+                if (data.trades && Array.isArray(data.trades)) {
+                    logConsole(`📊 Received ${data.trades.length} historical trades.`);
+                    renderTradeData(data.trades);
+                } else {
+                    renderTradeData([]);
                 }
 
-                if (data.msg_type === 'profit_table') {
-                    const transactions = data.profit_table.transactions || [];
-                    logConsole(`📊 Received ${transactions.length} transactions via WebSocket.`, 'success');
-                    processAndRenderTrades(transactions);
-                }
-            };
-
-            activeWs.onerror = function() {
-                logConsole(`❌ WebSocket Error on ${baseUrl}`, 'error');
-                tryNextEndpoint(token, accountId, appId, endpointIdx);
-            };
-
-            activeWs.onclose = function() {
-                logConsole('🔌 Direct WebSocket connection closed.');
-            };
-        }
-
-        function tryNextEndpoint(token, accountId, appId, currentIdx) {
-            const nextIdx = currentIdx + 1;
-            if (nextIdx < WS_ENDPOINTS.length) {
-                logConsole(`Retrying via backup endpoint (${WS_ENDPOINTS[nextIdx]})...`, 'warn');
-                connectDirectWebSocketFallback(token, accountId, appId, nextIdx);
-            } else {
-                setSyncStatus(false, 'Sync Failed');
-                logConsole(`❌ All connection attempts failed. Check API token permissions or network firewall.`, 'error');
+            } catch (err) {
+                logConsole(`❌ Network Error: Unable to reach Render Proxy. Wake up proxy at ${PROXY_URL}`);
             }
         }
 
-        function updateBalanceUI(balanceValue, accountId) {
-            const bal = parseFloat(balanceValue);
-            document.getElementById('metric-balance').innerText = `$${bal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            document.getElementById('account-id-label').innerText = `Account: ${accountId}`;
-            logConsole(`💰 Balance Updated: $${bal.toFixed(2)} USD`, 'success');
-        }
-
-        function processAndRenderTrades(trades) {
+        function renderTradeData(trades) {
             const tbody = document.getElementById('trade-history-body');
             tbody.innerHTML = '';
 
-            document.getElementById('log-count-badge').innerText = `${trades.length} Trades Synced`;
-
             if (!trades || trades.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-500 font-sans">No recent closed trades found for this account.</td></tr>`;
-                updateMetricsAndCharts([], 0, 0, 0, 0, 0);
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center p-6 text-gray-500">No recent trades found for this account.</td></tr>`;
                 return;
             }
 
             let totalProfit = 0;
-            let totalWins = 0;
-            let totalLosses = 0;
-            let grossProfit = 0;
-            let grossLoss = 0;
-            let equityCurve = [0];
+            let wins = 0;
+            let losses = 0;
+            let equityPoints = [0];
 
             trades.forEach(trade => {
-                const buy = parseFloat(trade.buy_price) || 0;
-                const sell = parseFloat(trade.sell_price) || 0;
-                const profit = sell - buy;
-
+                const profit = parseFloat(trade.sell_price || 0) - parseFloat(trade.buy_price || 0);
                 totalProfit += profit;
-                equityCurve.push(totalProfit);
+                equityPoints.push(totalProfit);
 
-                if (profit > 0) {
-                    totalWins++;
-                    grossProfit += profit;
-                } else if (profit < 0) {
-                    totalLosses++;
-                    grossLoss += Math.abs(profit);
-                }
-
-                const dateStr = trade.purchase_time ? new Date(trade.purchase_time * 1000).toLocaleString() : 'N/A';
+                if (profit > 0) wins++;
+                if (profit < 0) losses++;
 
                 const row = document.createElement('tr');
-                row.className = 'border-b border-slate-800/60 hover:bg-slate-800/30 transition-all';
+                row.className = 'border-b border-slate-800 hover:bg-slate-800/50';
                 row.innerHTML = `
-                    <td class="py-3 px-4 font-mono text-slate-400">${trade.transaction_id || 'N/A'}</td>
-                    <td class="py-3 px-4 text-slate-300 font-sans">${dateStr}</td>
-                    <td class="py-3 px-4 text-slate-300">$${buy.toFixed(2)}</td>
-                    <td class="py-3 px-4 text-slate-300">$${sell.toFixed(2)}</td>
-                    <td class="py-3 px-4 font-bold ${profit >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
+                    <td class="p-3 font-mono">${trade.transaction_id || 'N/A'}</td>
+                    <td class="p-3">${trade.purchase_time ? new Date(trade.purchase_time * 1000).toLocaleString() : 'N/A'}</td>
+                    <td class="p-3">$${parseFloat(trade.buy_price || 0).toFixed(2)}</td>
+                    <td class="p-3">$${parseFloat(trade.sell_price || 0).toFixed(2)}</td>
+                    <td class="p-3 font-bold ${profit >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
                         ${profit >= 0 ? '+' : ''}$${profit.toFixed(2)}
                     </td>
                 `;
                 tbody.appendChild(row);
             });
 
-            updateMetricsAndCharts(equityCurve, totalWins, totalLosses, grossProfit, grossLoss, totalProfit);
-        }
-
-        function updateMetricsAndCharts(equityCurve, wins, losses, grossProfit, grossLoss, netPnL) {
-            const totalTrades = wins + losses;
-            const winRate = totalTrades > 0 ? ((wins / totalTrades) * 100).toFixed(1) : '0.0';
-            const pf = grossLoss > 0 ? (grossProfit / grossLoss).toFixed(2) : (grossProfit > 0 ? '∞' : '0.00');
-
-            const avgWin = wins > 0 ? (grossProfit / wins).toFixed(0) : 0;
-            const avgLoss = losses > 0 ? (grossLoss / losses).toFixed(0) : 0;
-            const rrr = avgLoss > 0 ? (avgWin / avgLoss).toFixed(1) : '0.0';
-
-            let peak = -Infinity;
-            let maxDrawdown = 0;
-            equityCurve.forEach(val => {
-                if (val > peak) peak = val;
-                const dd = peak - val;
-                if (dd > maxDrawdown) maxDrawdown = dd;
-            });
-
-            const pnlElem = document.getElementById('metric-pnl');
-            pnlElem.innerText = `${netPnL >= 0 ? '+' : ''}$${netPnL.toFixed(2)}`;
-            pnlElem.className = `text-2xl font-bold ${netPnL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
-
+            const total = trades.length;
+            const winRate = total > 0 ? ((wins / total) * 100).toFixed(1) : 0;
+            document.getElementById('metric-pnl').innerText = `${totalProfit >= 0 ? '+' : ''}$${totalProfit.toFixed(2)}`;
             document.getElementById('metric-winrate').innerText = `${winRate}%`;
-            document.getElementById('metric-trades-count').innerText = `${wins} Wins / ${losses} Losses (${totalTrades} Total)`;
-            document.getElementById('metric-pf').innerText = pf;
-            document.getElementById('metric-avg-winloss').innerText = `$${avgWin} / $${avgLoss}`;
-            document.getElementById('metric-rrr').innerText = `Avg RRR: 1:${rrr}`;
-            document.getElementById('metric-drawdown').innerText = `${maxDrawdown > 0 ? '-' : ''}$${maxDrawdown.toFixed(2)}`;
+            document.getElementById('metric-trades-count').innerText = `${total} Trades Synced`;
 
-            equityChart.data.labels = equityCurve.map((_, i) => i === 0 ? 'Start' : `T${i}`);
-            equityChart.data.datasets[0].data = equityCurve;
-            equityChart.update();
-
-            outcomeChart.data.datasets[0].data = [wins, losses];
-            outcomeChart.update();
+            updateCharts(equityPoints, wins, losses);
         }
 
         function initCharts() {
             const ctxEquity = document.getElementById('equityChart').getContext('2d');
             equityChart = new Chart(ctxEquity, {
                 type: 'line',
-                data: {
-                    labels: ['Start'],
-                    datasets: [{
-                        label: 'Net Equity ($)',
-                        data: [0],
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.08)',
-                        fill: true,
-                        tension: 0.35,
-                        pointRadius: 3,
-                        pointHoverRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b' } },
-                        y: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b' } }
-                    }
-                }
+                data: { labels: ['Start'], datasets: [{ label: 'P&L ($)', data: [0], borderColor: '#10b981', tension: 0.3 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
 
             const ctxOutcome = document.getElementById('outcomeChart').getContext('2d');
             outcomeChart = new Chart(ctxOutcome, {
                 type: 'doughnut',
-                data: {
-                    labels: ['Wins', 'Losses'],
-                    datasets: [{
-                        data: [0, 0],
-                        backgroundColor: ['#10b981', '#f43f5e'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 12 } } }
-                    },
-                    cutout: '70%'
-                }
+                data: { labels: ['Wins', 'Losses'], datasets: [{ data: [0, 0], backgroundColor: ['#10b981', '#f43f5e'] }] },
+                options: { responsive: true, maintainAspectRatio: false }
             });
         }
 
-        function loadSampleData() {
-            updateBalanceUI(70.43, '1576104 (Sample)');
-            setSyncStatus(true, 'Sample Mode');
+        function updateCharts(equityData, wins, losses) {
+            equityChart.data.labels = equityData.map((_, i) => i === 0 ? 'Start' : `T${i}`);
+            equityChart.data.datasets[0].data = equityData;
+            equityChart.update();
 
-            const sampleTrades = [
-                { transaction_id: 'TRD9001', purchase_time: 1700000000, buy_price: 10.00, sell_price: 18.50 },
-                { transaction_id: 'TRD9002', purchase_time: 1700003600, buy_price: 15.00, sell_price: 8.00 },
-                { transaction_id: 'TRD9003', purchase_time: 1700007200, buy_price: 20.00, sell_price: 34.00 },
-                { transaction_id: 'TRD9004', purchase_time: 1700010800, buy_price: 12.00, sell_price: 22.00 },
-                { transaction_id: 'TRD9005', purchase_time: 1700014400, buy_price: 25.00, sell_price: 10.00 }
-            ];
-
-            processAndRenderTrades(sampleTrades);
-            logConsole('Loaded sample dataset ($70.43 USD balance).', 'info');
+            outcomeChart.data.datasets[0].data = [wins, losses];
+            outcomeChart.update();
         }
 
-        function clearAllData() {
-            if (activeWs) activeWs.close();
-            localStorage.removeItem('deriv_token');
-
+        function clearSampleData() {
             document.getElementById('metric-balance').innerText = '$0.00';
             document.getElementById('metric-pnl').innerText = '+$0.00';
             document.getElementById('metric-winrate').innerText = '0.0%';
             document.getElementById('metric-trades-count').innerText = '0 Trades Total';
-            document.getElementById('metric-pf').innerText = '0.00';
-            document.getElementById('metric-avg-winloss').innerText = '$0 / $0';
-            document.getElementById('metric-drawdown').innerText = '0.00%';
-            document.getElementById('trade-history-body').innerHTML = `<tr><td colspan="5" class="py-12 text-center text-slate-500 font-sans"><i class="fa-solid fa-eraser text-3xl mb-3 block text-slate-600"></i>Data cleared. Trigger sync or load sample data.</td></tr>`;
-
-            setSyncStatus(false, 'Disconnected');
-            updateMetricsAndCharts([0], 0, 0, 0, 0, 0);
-            logConsole('Cleared stored credentials and local data.', 'info');
+            document.getElementById('trade-history-body').innerHTML = `<tr><td colspan="5" class="text-center p-6 text-gray-500">Data reset. Click Deriv / TV Sync to load live data.</td></tr>`;
+            updateCharts([0], 0, 0);
         }
     </script>
 </body>
