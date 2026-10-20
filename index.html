@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deriv & cTrader Trading Journal</title>
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -22,9 +22,9 @@
             }
         }
     </script>
-    <!-- Chart.js -->
+    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- FontAwesome Icons -->
+    <!-- FontAwesome Icons CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
@@ -52,7 +52,7 @@
 </head>
 <body class="min-h-screen p-4 md:p-6 lg:p-8 flex flex-col justify-between">
 
-    <!-- Top Navigation Header -->
+    <!-- Header Navigation -->
     <header class="max-w-7xl mx-auto w-full mb-8">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900/80 p-5 rounded-2xl border border-slate-800 shadow-xl">
             <div class="flex items-center gap-3">
@@ -62,7 +62,7 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <h1 class="text-2xl font-extrabold tracking-tight text-white">Deriv Analytics</h1>
-                        <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs px-2.5 py-0.5 rounded-full font-medium">Live Sync</span>
+                        <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs px-2.5 py-0.5 rounded-full font-medium">Hybrid Sync</span>
                     </div>
                     <p class="text-xs text-slate-400">Automated Multi-Account Performance & Risk Journal</p>
                 </div>
@@ -82,10 +82,10 @@
         </div>
     </header>
 
-    <!-- Main Content Container -->
+    <!-- Main Content Grid -->
     <main class="max-w-7xl mx-auto w-full space-y-6 flex-grow">
 
-        <!-- Performance Overview Metric Cards -->
+        <!-- Performance Overview Cards -->
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <div class="card-glow p-4 rounded-2xl flex flex-col justify-between">
                 <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Account Balance</p>
@@ -93,9 +93,9 @@
                     <h2 id="metric-balance" class="text-2xl font-bold text-white">$0.00</h2>
                     <p id="account-id-label" class="text-[11px] text-slate-500 mt-0.5">Account: 1576104</p>
                 </div>
-                <div class="flex items-center gap-1 text-[11px] text-slate-400">
+                <div class="flex items-center gap-1.5 text-[11px]">
                     <span id="sync-indicator" class="w-2 h-2 rounded-full bg-slate-500"></span>
-                    <span id="sync-status-text">Disconnected</span>
+                    <span id="sync-status-text" class="text-slate-500">Disconnected</span>
                 </div>
             </div>
 
@@ -145,7 +145,7 @@
             </div>
         </div>
 
-        <!-- Interactive Analytics Charts -->
+        <!-- Charts Section -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="card-glow p-5 rounded-2xl lg:col-span-2 flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-4">
@@ -153,7 +153,7 @@
                         <h3 class="text-base font-bold text-white flex items-center gap-2">
                             <i class="fa-solid fa-chart-area text-blue-400"></i> Equity & Growth Trajectory
                         </h3>
-                        <p class="text-xs text-slate-400">Cumulative account profit progression over trades</p>
+                        <p class="text-xs text-slate-400">Cumulative account growth trajectory over closed trades</p>
                     </div>
                 </div>
                 <div class="h-64 w-full relative">
@@ -167,7 +167,7 @@
                         <h3 class="text-base font-bold text-white flex items-center gap-2">
                             <i class="fa-solid fa-chart-pie text-emerald-400"></i> Outcome Distribution
                         </h3>
-                        <p class="text-xs text-slate-400">Win / Loss / Break-even trade ratio</p>
+                        <p class="text-xs text-slate-400">Win / Loss / Break-even ratio</p>
                     </div>
                 </div>
                 <div class="h-64 w-full relative flex items-center justify-center">
@@ -176,14 +176,14 @@
             </div>
         </div>
 
-        <!-- Synchronized Trade Execution Logs Table -->
+        <!-- Trade Execution Table -->
         <div class="card-glow rounded-2xl overflow-hidden">
             <div class="p-5 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                 <div>
                     <h3 class="text-base font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-list-check text-indigo-400"></i> Synchronized Trade Execution Logs
                     </h3>
-                    <p class="text-xs text-slate-400">Real-time trade history fetched via WebSocket gateway</p>
+                    <p class="text-xs text-slate-400">Real-time trade history fetched via Deriv gateway</p>
                 </div>
                 <span id="log-count-badge" class="bg-slate-800 text-slate-300 border border-slate-700 text-xs px-3 py-1 rounded-lg">0 Trades Logged</span>
             </div>
@@ -203,7 +203,7 @@
                         <tr>
                             <td colspan="5" class="py-12 text-center text-slate-500 font-sans">
                                 <i class="fa-solid fa-circle-nodes text-3xl mb-3 block text-slate-600"></i>
-                                No synced trade history loaded. Click <strong>Deriv / TV Sync</strong> to connect your live account.
+                                No trade history loaded. Click <strong>Deriv / TV Sync</strong> to connect live account data.
                             </td>
                         </tr>
                     </tbody>
@@ -212,12 +212,11 @@
         </div>
     </main>
 
-    <!-- Footer -->
     <footer class="max-w-7xl mx-auto w-full mt-8 py-4 text-center text-xs text-slate-500 border-t border-slate-800/60">
-        Deriv & cTrader Trading Journal &copy; 2026. Connected to Deriv API Gateway v3.
+        Deriv & cTrader Trading Journal &copy; 2026. Powered by Render Proxy & Deriv WebSocket v3.
     </footer>
 
-    <!-- Integration Hub Modal -->
+    <!-- Integration Settings Modal -->
     <div id="sync-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="card-glow bg-slate-900 max-w-lg w-full rounded-2xl p-6 border border-slate-700 shadow-2xl relative">
             <div class="flex justify-between items-center mb-5 border-b border-slate-800 pb-3">
@@ -227,7 +226,7 @@
                     </div>
                     <div>
                         <h3 class="text-lg font-bold text-white">Integration Hub Settings</h3>
-                        <p class="text-xs text-slate-400">Configure WebSocket gateway parameters</p>
+                        <p class="text-xs text-slate-400">Configure Render Proxy & WebSocket credentials</p>
                     </div>
                 </div>
                 <button onclick="toggleModal(false)" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-all">
@@ -244,7 +243,7 @@
                             <i id="eye-icon" class="fa-solid fa-eye"></i>
                         </button>
                     </div>
-                    <p class="text-[11px] text-slate-500 mt-1">Requires 'Read' and 'Trading Information' scope enabled.</p>
+                    <p class="text-[11px] text-slate-500 mt-1">Requires 'Read' and 'Trading Information' permissions.</p>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
@@ -259,14 +258,14 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Sync Console Log</label>
-                    <div id="modal-log" class="bg-slate-950 border border-slate-800 p-3 rounded-xl font-mono h-32 overflow-y-auto text-emerald-400 custom-scrollbar space-y-1 text-[11px]">
-                        <div class="text-slate-500">[System] Integration console initialized. Ready to connect.</div>
+                    <label class="block font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Sync Engine Console Log</label>
+                    <div id="modal-log" class="bg-slate-950 border border-slate-800 p-3 rounded-xl font-mono h-36 overflow-y-auto custom-scrollbar space-y-1 text-[11px]">
+                        <div class="text-slate-500">[System] Integration hub initialized. Ready to sync.</div>
                     </div>
                 </div>
 
                 <div class="flex gap-2 pt-2">
-                    <button onclick="triggerDerivSync()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2">
+                    <button onclick="triggerHybridSync()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2">
                         <i class="fa-solid fa-bolt"></i> Trigger Live Sync
                     </button>
                     <button onclick="toggleModal(false)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold px-4 py-2.5 rounded-xl transition-all">
@@ -277,25 +276,23 @@
         </div>
     </div>
 
-    <!-- Application JavaScript Code -->
+    <!-- Application Script Logic -->
     <script>
         let equityChart, outcomeChart;
-        let ws = null;
-        let activeEndpointIndex = 0;
+        let activeWs = null;
 
-        // Primary and Fallback WebSocket Gateway Endpoints
-        const wsEndpoints = [
+        const RENDER_PROXY_URL = 'https://trading-journal-ivn5.onrender.com/api/sync';
+        const WS_ENDPOINTS = [
             'wss://ws.derivws.com/websockets/v3',
             'wss://ws.binaryws.com/websockets/v3'
         ];
 
         window.onload = function() {
             initCharts();
-            
-            // Restore cached credentials
+
             const savedToken = localStorage.getItem('deriv_token');
             const savedAccount = localStorage.getItem('deriv_account');
-            
+
             if (savedToken) {
                 document.getElementById('deriv-token-input').value = savedToken;
             }
@@ -304,21 +301,17 @@
                 document.getElementById('account-id-label').innerText = `Account: ${savedAccount}`;
             }
 
-            // Attempt auto-connect if token exists
             if (savedToken) {
-                triggerDerivSync();
+                triggerHybridSync();
             } else {
-                loadSampleData(); // Fallback to initial display
+                loadSampleData();
             }
         };
 
         function toggleModal(show) {
             const modal = document.getElementById('sync-modal');
-            if (show) {
-                modal.classList.remove('hidden');
-            } else {
-                modal.classList.add('hidden');
-            }
+            if (show) modal.classList.remove('hidden');
+            else modal.classList.add('hidden');
         }
 
         function toggleTokenVisibility() {
@@ -335,16 +328,20 @@
 
         function logConsole(msg, type = 'info') {
             const consoleDiv = document.getElementById('modal-log');
-            const colorClass = type === 'error' ? 'text-rose-400' : (type === 'success' ? 'text-emerald-400' : 'text-blue-300');
+            let color = 'text-blue-300';
+            if (type === 'error') color = 'text-rose-400';
+            if (type === 'success') color = 'text-emerald-400';
+            if (type === 'warn') color = 'text-amber-400';
+
             const time = new Date().toLocaleTimeString();
-            consoleDiv.innerHTML += `<div class="${colorClass}">[${time}] ${msg}</div>`;
+            consoleDiv.innerHTML += `<div class="${color}">[${time}] ${msg}</div>`;
             consoleDiv.scrollTop = consoleDiv.scrollHeight;
         }
 
         function setSyncStatus(connected, message) {
             const indicator = document.getElementById('sync-indicator');
             const label = document.getElementById('sync-status-text');
-            
+
             if (connected) {
                 indicator.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
                 label.innerText = message || 'Live Synced';
@@ -356,7 +353,7 @@
             }
         }
 
-        function triggerDerivSync() {
+        async function triggerHybridSync() {
             const token = document.getElementById('deriv-token-input').value.trim();
             const accountId = document.getElementById('deriv-account-input').value.trim() || '1576104';
             const appId = document.getElementById('deriv-appid-input').value.trim() || '1089';
@@ -370,35 +367,90 @@
             localStorage.setItem('deriv_token', token);
             localStorage.setItem('deriv_account', accountId);
 
-            if (ws) {
-                ws.close();
-            }
+            logConsole(`🚀 Initiating Hybrid Sync engine for account ${accountId}...`, 'info');
+            setSyncStatus(false, 'Syncing...');
 
-            connectWebSocket(token, accountId, appId, 0);
+            // Primary: Attempt Render Backend Proxy
+            const proxySuccess = await attemptRenderProxySync(token, accountId);
+            
+            // Secondary Fallback: Direct Client WebSockets
+            if (!proxySuccess) {
+                logConsole('⚠️ Proxy connection bypass required. Switching to Client WebSocket Fallback Engine...', 'warn');
+                connectDirectWebSocketFallback(token, accountId, appId, 0);
+            }
         }
 
-        function connectWebSocket(token, accountId, appId, endpointIdx) {
-            activeEndpointIndex = endpointIdx;
-            const baseUrl = wsEndpoints[endpointIdx];
-            const fullWsUrl = `${baseUrl}?app_id=${appId}`;
+        async function attemptRenderProxySync(token, accountId) {
+            logConsole(`[Primary Engine] Connecting to Render Proxy (${RENDER_PROXY_URL})...`);
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout
 
-            logConsole(`Connecting to Gateway (${baseUrl})...`);
-            setSyncStatus(false, 'Connecting...');
+                const response = await fetch(RENDER_PROXY_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: token, account_id: accountId }),
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    logConsole(`[Proxy Response] HTTP ${response.status} returned from proxy.`, 'warn');
+                    return false;
+                }
+
+                const data = await response.json();
+
+                if (data.error) {
+                    logConsole(`[Proxy Error]: ${data.error}`, 'error');
+                    return false;
+                }
+
+                logConsole(`✅ Render Backend Proxy Sync successful!`, 'success');
+                setSyncStatus(true, 'Render Proxy');
+
+                if (data.balance !== undefined) {
+                    updateBalanceUI(data.balance, accountId);
+                }
+
+                if (data.trades) {
+                    logConsole(`📊 Received ${data.trades.length} trades via backend proxy.`, 'success');
+                    processAndRenderTrades(data.trades);
+                }
+
+                return true;
+
+            } catch (err) {
+                logConsole(`[Proxy Fail]: ${err.name === 'AbortError' ? 'Connection Timeout' : err.message}`, 'warn');
+                return false;
+            }
+        }
+
+        function connectDirectWebSocketFallback(token, accountId, appId, endpointIdx) {
+            if (activeWs) {
+                activeWs.close();
+            }
+
+            const baseUrl = WS_ENDPOINTS[endpointIdx];
+            const wsUrl = `${baseUrl}?app_id=${appId}`;
+
+            logConsole(`[Fallback Engine] Connecting to WebSocket: ${baseUrl}...`);
 
             try {
-                ws = new WebSocket(fullWsUrl);
+                activeWs = new WebSocket(wsUrl);
             } catch (e) {
-                logConsole(`Failed to create socket on ${baseUrl}: ${e.message}`, 'error');
-                tryFallback(token, accountId, appId, endpointIdx);
+                logConsole(`Socket creation error: ${e.message}`, 'error');
+                tryNextEndpoint(token, accountId, appId, endpointIdx);
                 return;
             }
 
-            ws.onopen = function() {
-                logConsole(`Connected to socket. Sending authorization...`, 'success');
-                ws.send(JSON.stringify({ authorize: token }));
+            activeWs.onopen = function() {
+                logConsole(`WebSocket established. Authenticating token...`, 'info');
+                activeWs.send(JSON.stringify({ authorize: token }));
             };
 
-            ws.onmessage = function(event) {
+            activeWs.onmessage = function(event) {
                 const data = JSON.parse(event.data);
 
                 if (data.error) {
@@ -409,45 +461,52 @@
 
                 if (data.msg_type === 'authorize') {
                     const loginId = data.authorize.loginid;
-                    logConsole(`✅ Authorized connection for account ${loginId}`, 'success');
+                    logConsole(`🔓 Authorized Account: ${loginId}`, 'success');
                     document.getElementById('account-id-label').innerText = `Account: ${loginId}`;
-                    setSyncStatus(true, 'Authorized');
+                    setSyncStatus(true, 'Direct WebSocket');
 
-                    // Request balance and profit table history
-                    ws.send(JSON.stringify({ balance: 1, subscribe: 1 }));
-                    ws.send(JSON.stringify({ profit_table: 1, description: 1, limit: 100 }));
+                    activeWs.send(JSON.stringify({ balance: 1, subscribe: 1 }));
+                    activeWs.send(JSON.stringify({ profit_table: 1, description: 1, limit: 100 }));
                 }
 
                 if (data.msg_type === 'balance') {
                     const bal = parseFloat(data.balance.balance);
-                    const curr = data.balance.currency || 'USD';
-                    document.getElementById('metric-balance').innerText = `$${bal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                    logConsole(`💰 Balance Synced: $${bal} ${curr}`, 'success');
+                    updateBalanceUI(bal, accountId);
                 }
 
                 if (data.msg_type === 'profit_table') {
                     const transactions = data.profit_table.transactions || [];
-                    logConsole(`📊 Received ${transactions.length} historical closed transactions.`, 'success');
+                    logConsole(`📊 Received ${transactions.length} transactions via WebSocket.`, 'success');
                     processAndRenderTrades(transactions);
                 }
             };
 
-            ws.onerror = function(err) {
-                logConsole(`⚠️ WebSocket Connection Error on ${baseUrl}`, 'error');
-                setSyncStatus(false, 'Connection Error');
+            activeWs.onerror = function() {
+                logConsole(`❌ WebSocket Error on ${baseUrl}`, 'error');
+                tryNextEndpoint(token, accountId, appId, endpointIdx);
             };
 
-            ws.onclose = function() {
-                logConsole('🔌 Connection closed.');
+            activeWs.onclose = function() {
+                logConsole('🔌 Direct WebSocket connection closed.');
             };
         }
 
-        function tryFallback(token, accountId, appId, currentIdx) {
+        function tryNextEndpoint(token, accountId, appId, currentIdx) {
             const nextIdx = currentIdx + 1;
-            if (nextIdx < wsEndpoints.length) {
-                logConsole(`Attempting fallback endpoint (${wsEndpoints[nextIdx]})...`);
-                connectWebSocket(token, accountId, appId, nextIdx);
+            if (nextIdx < WS_ENDPOINTS.length) {
+                logConsole(`Retrying via backup endpoint (${WS_ENDPOINTS[nextIdx]})...`, 'warn');
+                connectDirectWebSocketFallback(token, accountId, appId, nextIdx);
+            } else {
+                setSyncStatus(false, 'Sync Failed');
+                logConsole(`❌ All connection attempts failed. Check API token permissions or network firewall.`, 'error');
             }
+        }
+
+        function updateBalanceUI(balanceValue, accountId) {
+            const bal = parseFloat(balanceValue);
+            document.getElementById('metric-balance').innerText = `$${bal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            document.getElementById('account-id-label').innerText = `Account: ${accountId}`;
+            logConsole(`💰 Balance Updated: $${bal.toFixed(2)} USD`, 'success');
         }
 
         function processAndRenderTrades(trades) {
@@ -486,7 +545,7 @@
                 }
 
                 const dateStr = trade.purchase_time ? new Date(trade.purchase_time * 1000).toLocaleString() : 'N/A';
-                
+
                 const row = document.createElement('tr');
                 row.className = 'border-b border-slate-800/60 hover:bg-slate-800/30 transition-all';
                 row.innerHTML = `
@@ -513,7 +572,6 @@
             const avgLoss = losses > 0 ? (grossLoss / losses).toFixed(0) : 0;
             const rrr = avgLoss > 0 ? (avgWin / avgLoss).toFixed(1) : '0.0';
 
-            // Calculate Max Drawdown
             let peak = -Infinity;
             let maxDrawdown = 0;
             equityCurve.forEach(val => {
@@ -522,7 +580,6 @@
                 if (dd > maxDrawdown) maxDrawdown = dd;
             });
 
-            // Populate Cards
             const pnlElem = document.getElementById('metric-pnl');
             pnlElem.innerText = `${netPnL >= 0 ? '+' : ''}$${netPnL.toFixed(2)}`;
             pnlElem.className = `text-2xl font-bold ${netPnL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
@@ -534,7 +591,6 @@
             document.getElementById('metric-rrr').innerText = `Avg RRR: 1:${rrr}`;
             document.getElementById('metric-drawdown').innerText = `${maxDrawdown > 0 ? '-' : ''}$${maxDrawdown.toFixed(2)}`;
 
-            // Update Charts
             equityChart.data.labels = equityCurve.map((_, i) => i === 0 ? 'Start' : `T${i}`);
             equityChart.data.datasets[0].data = equityCurve;
             equityChart.update();
@@ -594,25 +650,25 @@
         }
 
         function loadSampleData() {
-            document.getElementById('metric-balance').innerText = '$70.43';
-            document.getElementById('account-id-label').innerText = 'Account: 1576104 (Sample)';
-            setSyncStatus(true, 'Sample Loaded');
+            updateBalanceUI(70.43, '1576104 (Sample)');
+            setSyncStatus(true, 'Sample Mode');
 
             const sampleTrades = [
-                { transaction_id: 'TRD1001', purchase_time: 1700000000, buy_price: 10.00, sell_price: 18.50 },
-                { transaction_id: 'TRD1002', purchase_time: 1700003600, buy_price: 15.00, sell_price: 8.00 },
-                { transaction_id: 'TRD1003', purchase_time: 1700007200, buy_price: 20.00, sell_price: 34.00 },
-                { transaction_id: 'TRD1004', purchase_time: 1700010800, buy_price: 12.00, sell_price: 22.00 },
-                { transaction_id: 'TRD1005', purchase_time: 1700014400, buy_price: 25.00, sell_price: 10.00 }
+                { transaction_id: 'TRD9001', purchase_time: 1700000000, buy_price: 10.00, sell_price: 18.50 },
+                { transaction_id: 'TRD9002', purchase_time: 1700003600, buy_price: 15.00, sell_price: 8.00 },
+                { transaction_id: 'TRD9003', purchase_time: 1700007200, buy_price: 20.00, sell_price: 34.00 },
+                { transaction_id: 'TRD9004', purchase_time: 1700010800, buy_price: 12.00, sell_price: 22.00 },
+                { transaction_id: 'TRD9005', purchase_time: 1700014400, buy_price: 25.00, sell_price: 10.00 }
             ];
 
             processAndRenderTrades(sampleTrades);
-            logConsole('Loaded sample account dataset ($70.43 balance).', 'info');
+            logConsole('Loaded sample dataset ($70.43 USD balance).', 'info');
         }
 
         function clearAllData() {
-            if (ws) ws.close();
+            if (activeWs) activeWs.close();
             localStorage.removeItem('deriv_token');
+
             document.getElementById('metric-balance').innerText = '$0.00';
             document.getElementById('metric-pnl').innerText = '+$0.00';
             document.getElementById('metric-winrate').innerText = '0.0%';
@@ -621,10 +677,10 @@
             document.getElementById('metric-avg-winloss').innerText = '$0 / $0';
             document.getElementById('metric-drawdown').innerText = '0.00%';
             document.getElementById('trade-history-body').innerHTML = `<tr><td colspan="5" class="py-12 text-center text-slate-500 font-sans"><i class="fa-solid fa-eraser text-3xl mb-3 block text-slate-600"></i>Data cleared. Trigger sync or load sample data.</td></tr>`;
-            
+
             setSyncStatus(false, 'Disconnected');
             updateMetricsAndCharts([0], 0, 0, 0, 0, 0);
-            logConsole('Cleared local dataset and disconnected socket.', 'info');
+            logConsole('Cleared stored credentials and local data.', 'info');
         }
     </script>
 </body>
