@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deriv & cTrader Analytics Dashboard</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; }
@@ -17,13 +19,13 @@
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <div>
             <h1 class="text-2xl font-bold flex items-center gap-2">
-                <span class="bg-blue-600 text-white p-2 rounded-lg">📊</span> cTrader / Deriv Analytics
+                <span class="bg-blue-600 text-white p-2 rounded-lg">📊</span> Deriv Analytics
             </h1>
             <p class="text-gray-400 text-sm">Automated Performance & Risk Journal</p>
         </div>
         <div class="flex flex-wrap gap-3">
             <button onclick="toggleModal(true)" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2">
-                🔌 Connect cTrader
+                🔌 Deriv / TV Sync
             </button>
             <button onclick="clearSampleData()" class="bg-slate-700 hover:bg-slate-600 text-white font-medium px-4 py-2 rounded-lg">
                 🧪 Clear / Reset
@@ -31,12 +33,12 @@
         </div>
     </div>
 
-    <!-- Metrics Overview -->
+    <!-- Metrics Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
         <div class="card">
             <p class="text-gray-400 text-xs font-semibold uppercase">Account Balance</p>
             <h3 id="metric-balance" class="text-2xl font-bold text-white mt-1">$0.00</h3>
-            <span id="account-id-label" class="text-gray-500 text-xs">Sync Pending</span>
+            <span id="account-id-label" class="text-gray-500 text-xs">Live Sync Pending</span>
         </div>
         <div class="card">
             <p class="text-gray-400 text-xs font-semibold uppercase">Net P&L</p>
@@ -61,7 +63,7 @@
         </div>
     </div>
 
-    <!-- Charts Section -->
+    <!-- Charts -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <div class="card lg:col-span-2">
             <h3 class="text-lg font-bold mb-4">📈 Equity & Growth Trajectory</h3>
@@ -77,70 +79,71 @@
         </div>
     </div>
 
-    <!-- Historical Trades Table -->
+    <!-- Synchronized Trade History Table -->
     <div class="card">
         <h3 class="text-lg font-bold mb-4">📋 Synchronized Trade History</h3>
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm text-gray-300">
                 <thead class="bg-slate-800 text-gray-400 uppercase text-xs">
                     <tr>
-                        <th class="p-3">Deal ID</th>
-                        <th class="p-3">Execution Time</th>
-                        <th class="p-3">Volume / Stake</th>
-                        <th class="p-3">Execution Price</th>
+                        <th class="p-3">Transaction ID</th>
+                        <th class="p-3">Purchase Time</th>
+                        <th class="p-3">Buy Price / Stake</th>
+                        <th class="p-3">Sell Price / Payout</th>
                         <th class="p-3">Profit / Loss</th>
                     </tr>
                 </thead>
                 <tbody id="trade-history-body">
                     <tr>
-                        <td colspan="5" class="text-center p-6 text-gray-500">No synced trade history available. Connect your cTrader account to load data.</td>
+                        <td colspan="5" class="text-center p-6 text-gray-500">No synced trade history available. Connect your cTrader Token to load data.</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Sync Modal -->
+    <!-- Integration Settings Modal -->
     <div id="sync-modal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50">
         <div class="card max-w-lg w-full">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold">🔌 cTrader Open API Integration</h3>
+                <h3 class="text-lg font-bold">🔌 Integration Hub Settings</h3>
                 <button onclick="toggleModal(false)" class="text-gray-400 hover:text-white">✕</button>
             </div>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs uppercase text-gray-400 mb-1">cTrader Account ID</label>
-                    <input type="text" id="ctrader-account-input" value="1576104" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
-                </div>
-                <div>
                     <label class="block text-xs uppercase text-gray-400 mb-1">cTrader Access Token</label>
-                    <input type="password" id="ctrader-token-input" placeholder="Paste Access Token from cTrader Playground" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+                    <input type="password" id="deriv-token-input" placeholder="Paste your cTrader Access Token" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase text-gray-400 mb-1">Sync Log</label>
+                    <label class="block text-xs uppercase text-gray-400 mb-1">Account ID</label>
+                    <input type="text" id="deriv-account-input" value="1576104" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-gray-400 mb-1">Sync Console Log</label>
                     <div id="modal-log" class="bg-black/50 p-3 rounded text-xs font-mono h-28 overflow-y-auto text-emerald-400">
-                        [System Ready] Click Trigger Live Sync to fetch live balance & history.
+                        [System Ready] Click Trigger Live Sync to request data via Render Proxy.
                     </div>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="triggerSync()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded">Trigger Live Sync</button>
+                    <button onclick="triggerDerivSync()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded">Trigger Live Sync</button>
                     <button onclick="toggleModal(false)" class="bg-slate-700 text-white px-4 py-2 rounded">Close</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Dashboard JavaScript Logic -->
     <script>
         let equityChart, outcomeChart;
         const PROXY_URL = 'https://trading-journal-ivn5.onrender.com';
 
         window.onload = function() {
             initCharts();
-            if(localStorage.getItem('ctrader_token')) {
-                document.getElementById('ctrader-token-input').value = localStorage.getItem('ctrader_token');
+            if(localStorage.getItem('deriv_token')) {
+                document.getElementById('deriv-token-input').value = localStorage.getItem('deriv_token');
             }
-            if(localStorage.getItem('ctrader_account')) {
-                document.getElementById('ctrader-account-input').value = localStorage.getItem('ctrader_account');
+            if(localStorage.getItem('deriv_account')) {
+                document.getElementById('deriv-account-input').value = localStorage.getItem('deriv_account');
             }
         };
 
@@ -154,49 +157,55 @@
             consoleDiv.scrollTop = consoleDiv.scrollHeight;
         }
 
-        async function triggerSync() {
-            const token = document.getElementById('ctrader-token-input').value.trim();
-            const accountId = document.getElementById('ctrader-account-input').value.trim();
+        async function triggerDerivSync() {
+            const token = document.getElementById('deriv-token-input').value.trim();
+            const accountId = document.getElementById('deriv-account-input').value.trim();
 
-            if (!token || !accountId) {
-                logConsole('⚠️ Please provide both Account ID and Access Token.');
+            if (!token) {
+                logConsole('⚠️ Error: Please enter your Access Token.');
                 return;
             }
 
-            localStorage.setItem('ctrader_token', token);
-            localStorage.setItem('ctrader_account', accountId);
+            localStorage.setItem('deriv_token', token);
+            localStorage.setItem('deriv_account', accountId);
 
-            logConsole(`Connecting to Render Proxy (${PROXY_URL})...`);
+            logConsole(`Connecting via Render Backend Proxy (${PROXY_URL})...`);
 
             try {
+                // Correctly passing accountId and accessToken as expected by Render proxy
                 const response = await fetch(`${PROXY_URL}/api/sync`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ accountId: accountId, accessToken: token })
+                    body: JSON.stringify({ 
+                        accountId: accountId, 
+                        accessToken: token 
+                    })
                 });
 
                 const data = await response.json();
 
                 if (!response.ok || data.error) {
-                    logConsole(`❌ Sync Error: ${data.error || 'Failed to fetch account metrics'}`);
+                    logConsole(`❌ Proxy Error: ${data.error || 'Sync request failed.'}`);
                     return;
                 }
 
                 logConsole(`✅ Successfully synchronized account ${accountId}!`);
-                
+
                 if (data.balance !== undefined) {
                     document.getElementById('metric-balance').innerText = `$${parseFloat(data.balance).toFixed(2)}`;
                     document.getElementById('account-id-label').innerText = `Account: ${accountId}`;
-                    logConsole(`💰 Live Balance: $${data.balance}`);
+                    logConsole(`💰 Live Balance Fetched: $${data.balance}`);
                 }
 
                 if (data.trades && Array.isArray(data.trades)) {
-                    logConsole(`📊 Loaded ${data.trades.length} historical deal logs.`);
+                    logConsole(`📊 Received ${data.trades.length} historical trades.`);
                     renderTradeData(data.trades);
+                } else {
+                    renderTradeData([]);
                 }
 
-            } catch (error) {
-                logConsole(`❌ Connection Error: Ensure Render Proxy (${PROXY_URL}) is active.`);
+            } catch (err) {
+                logConsole(`❌ Network Error: Unable to reach Render Proxy. Wake up proxy at ${PROXY_URL}`);
             }
         }
 
@@ -215,7 +224,7 @@
             let equityPoints = [0];
 
             trades.forEach(trade => {
-                const profit = parseFloat(trade.profit || 0);
+                const profit = parseFloat(trade.sell_price || trade.profit || 0);
                 totalProfit += profit;
                 equityPoints.push(totalProfit);
 
@@ -225,10 +234,10 @@
                 const row = document.createElement('tr');
                 row.className = 'border-b border-slate-800 hover:bg-slate-800/50';
                 row.innerHTML = `
-                    <td class="p-3 font-mono">${trade.dealId || 'N/A'}</td>
-                    <td class="p-3">${trade.executionTime ? new Date(trade.executionTime).toLocaleString() : 'N/A'}</td>
-                    <td class="p-3">${trade.volume || 0} units</td>
-                    <td class="p-3">$${parseFloat(trade.executionPrice || 0).toFixed(2)}</td>
+                    <td class="p-3 font-mono">${trade.transaction_id || trade.dealId || 'N/A'}</td>
+                    <td class="p-3">${trade.purchase_time ? new Date(trade.purchase_time * 1000).toLocaleString() : (trade.executionTime ? new Date(trade.executionTime).toLocaleString() : 'N/A')}</td>
+                    <td class="p-3">$${parseFloat(trade.buy_price || trade.volume || 0).toFixed(2)}</td>
+                    <td class="p-3">$${parseFloat(trade.sell_price || trade.executionPrice || 0).toFixed(2)}</td>
                     <td class="p-3 font-bold ${profit >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
                         ${profit >= 0 ? '+' : ''}$${profit.toFixed(2)}
                     </td>
@@ -275,7 +284,7 @@
             document.getElementById('metric-pnl').innerText = '+$0.00';
             document.getElementById('metric-winrate').innerText = '0.0%';
             document.getElementById('metric-trades-count').innerText = '0 Trades Total';
-            document.getElementById('trade-history-body').innerHTML = `<tr><td colspan="5" class="text-center p-6 text-gray-500">Data reset. Click Connect cTrader to load live data.</td></tr>`;
+            document.getElementById('trade-history-body').innerHTML = `<tr><td colspan="5" class="text-center p-6 text-gray-500">Data reset. Click Deriv / TV Sync to load live data.</td></tr>`;
             updateCharts([0], 0, 0);
         }
     </script>
